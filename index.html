@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RF Wireless FPGA Design — NYCU EECM30152</title>
+  <style>
+    :root {
+      --primary: #1a3a5c;
+      --accent: #2e7dd1;
+      --light: #f4f7fb;
+      --border: #d0dce8;
+      --text: #1e2d3d;
+      --muted: #5a7290;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--light);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 3rem 1.5rem 2.5rem;
+      text-align: center;
+    }
+    header .tag {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: .25rem .75rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: .4rem;
+    }
+    header h1 span { color: #90c4ff; }
+    header .sub {
+      font-size: 1rem;
+      color: #a8c8f0;
+      margin-bottom: 1.4rem;
+    }
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      justify-content: center;
+    }
+    .meta-pills span {
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      color: #ddeeff;
+      font-size: .82rem;
+      padding: .3rem .9rem;
+      border-radius: 999px;
+    }
+
+    /* ── Layout ── */
+    main {
+      max-width: 960px;
+      margin: 2.5rem auto;
+      padding: 0 1.25rem;
+      display: grid;
+      gap: 2rem;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem 2rem;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-bottom: 1rem;
+      padding-bottom: .6rem;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* ── Overview ── */
+    .overview p { color: var(--text); font-size: .97rem; }
+
+    /* ── Two-column card layout ── */
+    .two-col-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    @media (max-width: 640px) {
+      .two-col-cards { grid-template-columns: 1fr; }
+    }
+
+    /* ── Prerequisites ── */
+    .prereq-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+    .prereq-list li {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .95rem;
+    }
+    .prereq-list li::before {
+      content: '';
+      width: 8px; height: 8px;
+      background: var(--accent);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ── Schedule ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    thead th {
+      background: var(--primary);
+      color: #fff;
+      padding: .65rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      font-size: .8rem;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    thead th:first-child { border-radius: 8px 0 0 0; }
+    thead th:last-child  { border-radius: 0 8px 0 0; }
+    tbody tr:nth-child(even) { background: #f0f5fb; }
+    tbody tr:hover { background: #deeaf8; }
+    tbody td {
+      padding: .6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    .week-num {
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+      width: 60px;
+    }
+    .date { color: var(--muted); white-space: nowrap; }
+    .badge {
+      display: inline-block;
+      padding: .15rem .55rem;
+      border-radius: 999px;
+      font-size: .72rem;
+      font-weight: 600;
+    }
+    .res-cell { font-size: .82rem; white-space: nowrap; }
+    .res-cell a { display: inline-block; color: var(--accent); text-decoration: none; margin-bottom: .1rem; }
+    .res-cell a:hover { text-decoration: underline; }
+    .res-cell.coming { color: var(--muted); font-style: italic; }
+    .badge-mid  { background: #fff3cd; color: #7a5200; }
+    .badge-final{ background: #d4edda; color: #155724; }
+
+    /* ── Textbooks ── */
+    .book-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .9rem;
+    }
+    .book-list li {
+      display: flex;
+      gap: .9rem;
+      align-items: flex-start;
+    }
+    .book-num {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .78rem;
+      font-weight: 700;
+    }
+    .book-list li p { font-size: .9rem; }
+    .book-list li em { color: var(--muted); font-size: .83rem; }
+
+    /* ── Teaching Assistants ── */
+    .ta-grid {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .ta-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .6rem;
+    }
+    .ta-card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent);
+    }
+    .ta-name {
+      font-weight: 600;
+      color: var(--primary);
+      font-size: .95rem;
+    }
+    .ta-link {
+      font-size: .8rem;
+      color: var(--accent);
+      text-decoration: none;
+      text-align: center;
+    }
+    .ta-link:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 1.25rem 1rem; }
+      thead th, tbody td { padding: .5rem .6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="tag">NYCU · Fall 2026 · EECM30152</div>
+  <h1>Radio Frequency System on Chip<br><span>FPGA Design</span></h1>
+  <div class="sub">RF Wireless FPGA Design</div>
+  <div style="margin-bottom:1.2rem;">
+    <img src="https://avatars.githubusercontent.com/u/121087211?v=4"
+         alt="Prof. Li-Chun Wang"
+         width="120" height="120"
+         style="border-radius:50%; border:3px solid rgba(255,255,255,.4); object-fit:cover;">
+  </div>
+  <div class="meta-pills">
+    <span>👨‍🏫 Prof. Li-Chun Wang · <a href="https://wang.web.nycu.edu.tw/" target="_blank" rel="noopener" style="color:#90c4ff; text-decoration:none;">🌐 Website</a> · <a href="mailto:wang@nycu.edu.tw" style="color:#90c4ff; text-decoration:none;">✉️ wang@nycu.edu.tw</a></span>
+    <span>📚 3 Credits · Elective</span>
+    <span>🏛 Graduate Program in Telecommunications Engineering</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- Overview -->
+  <div class="card overview">
+    <h2>Course Overview</h2>
+    <p>This course aims to equip students with machine learning (AI) and wireless communication algorithm design capabilities, understanding 5G and O-RAN architectures, and enabling hands-on implementation of communication algorithms in 5G and O-RAN small base stations on <strong>FPGA/RFSoC platforms</strong>. Students will learn the complete process from communication system modeling and AI algorithm design to implementation and testing on an FPGA board, thereby mastering cross-domain skills spanning theory, algorithms, and hardware implementation.</p>
+    <p style="margin-top:.9rem;">
+      <a href="https://e3p.nycu.edu.tw/course/view.php?id=21779" target="_blank" rel="noopener" style="color:var(--accent); font-size:.92rem;">🎓 E3 Course Page (e3p.nycu.edu.tw)</a>
+    </p>
+  </div>
+
+  <!-- Prerequisites + Online Resources -->
+  <div class="two-col-cards">
+    <div class="card">
+      <h2>Prerequisites</h2>
+      <ul class="prereq-list">
+        <li>Digital Communications</li>
+        <li>Computer Networks</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h2>Grading Policy</h2>
+      <ul class="prereq-list">
+        <li>Assignments — 30%</li>
+        <li>Final Proposal — 30%</li>
+        <li>Final Project — 40%</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Schedule -->
+  <div class="card">
+    <h2>Weekly Schedule</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="text-align:center">Wk</th>
+          <th>Date</th>
+          <th>Unit / Topic</th>
+          <th>Lecture Content &amp; Activities</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="week-num">1</td>
+          <td class="date">2026-09-09 (Wed)</td>
+          <td><strong>RFSoC Design</strong></td>
+          <td>
+            • Course Introduction<br>
+            • Vivado / Vitis Introduction<br>
+            • Overview + RFSoC FPGA<br>
+            • AMD FPGA Architecture &amp; Design Flow<br>
+            • Development Tools and Environment
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">2</td>
+          <td class="date">2026-09-16 (Wed)</td>
+          <td><strong>RFSoC Design</strong></td>
+          <td>
+            • OFDM Transmitter Design<br>
+            • OFDM Modulation &amp; Frame Generation<br>
+            • RFDC Configuration &amp; IP Integration
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">3</td>
+          <td class="date">2026-09-23 (Wed)</td>
+          <td><strong>RFSoC Design</strong></td>
+          <td>
+            • OFDM Transmitter Design<br>
+            • OFDM Transmitter – RF Up-Conversion
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">4</td>
+          <td class="date">2026-09-30 (Wed)</td>
+          <td><strong>RFSoC Design</strong></td>
+          <td>
+            • OFDM Receiver Design<br>
+            • 1. OFDM Receiver – RF Down-Conversion<br>
+            • 2. OFDM Receiver Synchronization
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">5</td>
+          <td class="date">2026-10-07 (Wed)</td>
+          <td><strong>RFSoC Design</strong></td>
+          <td>
+            • OFDM Receiver Design<br>
+            • Channel Estimation and Equalization
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">6</td>
+          <td class="date">2026-10-14 (Wed)</td>
+          <td><strong>5G Application</strong></td>
+          <td>
+            • Wireless Technology Trend (1G~5G)<br>
+            • Wi-Fi vs Cellular<br>
+            • 5G Features (eMBB / URLLC / mMTC)<br>
+            • Cellular System Architecture<br>
+            • Radio Frame Structure &amp; Slot Configuration<br>
+            • 5G NR Physical Channels &amp; Signal Processing
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">7</td>
+          <td class="date">2026-10-21 (Wed)</td>
+          <td><strong>5G Application</strong></td>
+          <td>
+            • 5G NR Protocol Stack<br>
+            • Attach Procedure<br>
+            • L2 DL/UL Data Flow<br>
+            • RRC and NAS<br>
+            • Applications for 5G Telecommunication
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">8</td>
+          <td class="date">2026-10-28 (Wed)</td>
+          <td><strong>Communications AI Chip</strong></td>
+          <td>
+            • AI Wireless Chips – Edge AI
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">9</td>
+          <td class="date">2026-11-04 (Wed)</td>
+          <td><strong>Communications AI Chip</strong></td>
+          <td>
+            • Communications AI Chip Design &amp; Implementation (II)
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">10</td>
+          <td class="date">2026-11-11 (Wed)</td>
+          <td><strong>Communications AI Chip</strong></td>
+          <td>
+            • Communications AI Chip Design &amp; Implementation (III)
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">11</td>
+          <td class="date">2026-11-18 (Wed)</td>
+          <td><strong>Final Proposal</strong> &nbsp;<span class="badge badge-mid">Midterm</span></td>
+          <td>
+            • Final Proposal Presentations
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">12</td>
+          <td class="date">2026-11-25 (Wed)</td>
+          <td><strong>Final Proposal</strong></td>
+          <td>
+            • Final Proposal Presentations &amp; Discussion
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">13</td>
+          <td class="date">2026-12-02 (Wed)</td>
+          <td><strong>Final Project</strong></td>
+          <td>
+            • Hands-on Project Implementation &amp; Demo
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">14</td>
+          <td class="date">2026-12-09 (Wed)</td>
+          <td><strong>Final Project</strong></td>
+          <td>
+            • Hands-on Project Implementation &amp; Demo
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">15</td>
+          <td class="date">2026-12-16 (Wed)</td>
+          <td><strong>Final Project</strong></td>
+          <td>
+            • Hands-on Project Implementation &amp; Demo
+          </td>
+        </tr>
+        <tr>
+          <td class="week-num">16</td>
+          <td class="date">2026-12-23 (Wed)</td>
+          <td><strong>Final Project</strong> &nbsp;<span class="badge badge-final">Final</span></td>
+          <td>
+            • Hands-on Project Implementation &amp; Demo / Wrap-up
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Teaching Assistants -->
+  <div class="card">
+    <h2>Teaching Assistants</h2>
+    <div class="ta-grid">
+      <div class="ta-card">
+        <img src="https://avatars.githubusercontent.com/u/121087211?v=4" alt="Tim" />
+        <div class="ta-name">Tim</div>
+        <a href="https://tvy14.github.io" target="_blank" rel="noopener" class="ta-link">🌐 Website</a>
+        <a href="mailto:timovy.ee11@nycu.edu.tw" class="ta-link">✉️ timovy.ee11@nycu.edu.tw</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Textbooks -->
+  <div class="card">
+    <h2>Textbooks &amp; References</h2>
+    <ul class="book-list">
+      <li>
+        <div class="book-num">1</div>
+        <div>
+          <p><strong>Machine Learning for Future Wireless Communications</strong></p>
+          <em>F. L. Luo — Wiley / IEEE Press, 2020</em>
+        </div>
+      </li>
+      <li>
+        <div class="book-num">2</div>
+        <div>
+          <p><strong>Key Technologies for 5G Wireless Systems</strong></p>
+          <em>Wong, Schober, Ng &amp; Wang — Cambridge University Press, 2017</em><br>
+          <a href="https://www.cambridge.org/core/books/key-technologies-for-5g-wireless-systems/BC7B1FA521EDB1DCB994EB0B07F75D98" target="_blank" rel="noopener" style="font-size:.83rem; color:var(--accent);">🔗 Online Book</a>
+        </div>
+      </li>
+      <li>
+        <div class="book-num">3</div>
+        <div>
+          <p><strong>SDR with Zynq Ultrascale+ RFSoC</strong></p>
+          <em>AMD, 2022</em><br>
+          <a href="https://rfsocbook.com/0625/RFSoC_SDR_book.pdf" target="_blank" rel="noopener" style="font-size:.83rem; color:var(--accent);">🔗 Online Book</a>
+        </div>
+      </li>
+      <li>
+        <div class="book-num">4</div>
+        <div>
+          <p><strong>Shaping Future 6G Networks: Needs, Impacts, and Technologies</strong></p>
+          <em>John Wiley &amp; Sons, 2021</em>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  &copy; 2026 National Yang Ming Chiao Tung University · All Rights Reserved
+</footer>
+
+</body>
+</html>
