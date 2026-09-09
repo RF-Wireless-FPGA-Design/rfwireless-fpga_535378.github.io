@@ -242,6 +242,40 @@
       .card { padding: 1.25rem 1rem; }
       thead th, tbody td { padding: .5rem .6rem; }
     }
+
+    /* ── Video Grid ── */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .video-item {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+    .video-caption {
+      padding: .6rem 1rem;
+      font-size: .82rem;
+      color: var(--muted);
+      text-align: center;
+      background: var(--light);
+      border-top: 1px solid var(--border);
+    }
+
   </style>
 </head>
 <body>
@@ -302,14 +336,35 @@
     </div>
   </div>
 
-  <!-- Grading Policy -->
+  <!-- RFSoC Demonstration Videos -->
   <div class="card">
-    <h2>Grading Policy</h2>
-    <ul class="prereq-list">
-      <li>Assignments — 30%</li>
-      <li>Final Proposal — 30%</li>
-      <li>Final Project — 40%</li>
-    </ul>
+    <h2>RFSoC Demonstration Videos</h2>
+    <div class="video-grid">
+      <div class="video-item">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/Y1fp86q7hDo" title="RFSoC Demo 1" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">RFSoC Demo 1</div>
+      </div>
+      <div class="video-item">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/WmCsJp6ht6U" title="RFSoC Demo 2" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">RFSoC Demo 2</div>
+      </div>
+      <div class="video-item">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/VmmPcpwwZSQ" title="RFSoC Demo 3" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">RFSoC Demo 3</div>
+      </div>
+      <div class="video-item">
+        <div class="video-wrapper">
+          <iframe src="https://www.youtube.com/embed/97h5g0dFV1s" title="RFSoC Demo 4" frameborder="0" allowfullscreen></iframe>
+        </div>
+        <div class="video-caption">RFSoC Demo 4</div>
+      </div>
+    </div>
   </div>
 
 
