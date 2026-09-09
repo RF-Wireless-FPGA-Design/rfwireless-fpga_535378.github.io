@@ -2,7 +2,7 @@
 
 Course website for **Radio Frequency System on Chip FPGA Design**, Fall 2026, National Yang Ming Chiao Tung University.
 
-🌐 **Live site:** https://RF-Wireless-FPGA-Design.github.io/rfwireless-fpga_535378.github.io/
+🌐 **Live site:** https://rf-wireless-fpga-design.github.io/
 
 ## Structure
 
@@ -20,4 +20,4 @@ The website is built from `index.html` and deployed automatically via GitHub Pag
 
 ## Repository
 
-- Source: https://github.com/RF-Wireless-FPGA-Design/rfwireless-fpga_535378.github.io
+- Source: https://github.com/RF-Wireless-FPGA-Design/rf-wireless-fpga-design.github.io
